@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tab</title>  
+</head>
+<style>
+    .box{
+       width: 298px;
+       height: 300px;
+       border: 1px solid #CCC;
+       margin: 30px;
+   }
+    ul{
+        margin: 0;
+        padding: 0;
+        width: 300px;
+        height: 20px;
+        background: #CCC;
+        list-style: none;
+        margin-left: -1px;
+    }
+    li{
+        float: left;
+        width: 100px;
+        height: 100%;
+        text-align: center;
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+        border-bottom: 1px solid #848484;
+    }
+    li a {
+        display: inline-block;
+        height: 100%;
+        width: 100%;
+        text-decoration: none;
+    }
+    .active{
+        background-color: #fff;
+        border-left: 1px solid #cccccc;
+        border-right:1px solid #cccccc;
+        border-bottom: 0;
+    }
+    .contentBox div{
+        display: none;
+    }
+</style>
+<body>
+    <div class="box">
+        <ul>
+            <li class="ab active"><a href="#">red</a></li>
+            <li class="ab"><a href="#">green</a></li>
+            <li class="ab"><a href="#">blue</a></li>
+        </ul>
+        <div class="contentBox">
+            <div style="display: block" class="content">red</div>
+            <div class="content">green</div>
+            <div class="content">blue</div>
+        </div>
+    </div>
+
+     <script>
+        //判断是否有某个class
+        function hasClass(obj, cls) {
+            return obj.className.match(new RegExp('(\\s|^)' + cls + '(\\s|$)'));
+            /*或者
+            return obj.getAttribute('class').indexOf(cls)；*/
+        }
+        //添加一个class
+        function addClass(obj, cls) {
+            if (!this.hasClass(obj, cls)) obj.className += " " + cls;
+        }
+        //删除一个class
+        function removeClass(obj, cls) {
+            if (hasClass(obj, cls)) {
+                var reg = new RegExp('(\\s|^)' + cls + '(\\s|$)');
+                obj.className = obj.className.replace(reg, ' ');
+            }
+        }
+
+        //切换class
+        function toggleClass(obj,cls){
+            if(hasClass(obj,cls)){
+                removeClass(obj, cls);
+            }else{
+                addClass(obj, cls);
+            }
+        }
+        window.onload = function(){
+            let lis = document.getElementsByTagName('li');
+            let divs = document.getElementsByClassName('content');
+            if(lis.length!==divs.length)
+                return;
+
+            // 没有延迟的选项卡
+            /*for(let i= 0,len=lis.length;i<len;i++){
+                lis[i].onmouseover = function(){
+                        for(let j=0 ,len=lis.length;j<len;j++){
+
+                            if(lis[j].getAttribute('class').indexOf('active')!==-1){
+                                removeClass(lis[j], "active")
+                            }
+                            /!* if(hasClass(lis[j], "active")){
+                             removeClass(lis[j], "active")
+                             }*!/
+                            divs[j].style.display = 'none'
+                        }
+                        this.className +=" active";
+                        divs[i].style.display = 'block'
+
+                }
+            }*/
+
+            //延迟500ms的选项卡
+           /* let timer=null;
+            for(let i= 0,len=lis.length;i<len;i++){
+                lis[i].onmouseover = function(){
+                    clearTimeout(timer);
+                    timer=setTimeout(function(){
+                        for(let j=0 ,len=lis.length;j<len;j++){
+
+                            if(lis[j].getAttribute('class').indexOf('active')!==-1){
+                                removeClass(lis[j], "active")
+                            }
+                            /!* if(hasClass(lis[j], "active")){
+                             removeClass(lis[j], "active")
+                             }*!/
+                            divs[j].style.display = 'none'
+                        }
+                        this.className +=" active";
+                        divs[i].style.display = 'block'
+
+                    }.bind(this),500)
+
+                }
+            }*/
+
+
+            //自动切换
+            let timer=null,
+                i=0,
+                len=lis.length;
+
+            function change(){
+                i++;
+                if(i>(len-1)){i=0}
+                for(let j=0;j<len;j++){
+                    if(hasClass(lis[j],'active')){
+                        removeClass(lis[j],'active')
+                    }
+                    divs[j].style.display='none'
+                }
+                lis[i].className +=" active";
+                divs[i].style.display = 'block'
+            }
+
+            timer =setInterval(change,2000);
+            for( let j=0;j<len;j++){
+                lis[j].onmouseover=function(){
+                    clearInterval(timer);
+                };
+                lis[j].onmouseout=function(){
+                    timer =setInterval(change,2000)
+                }
+            }
+        }
+    </script>
+</body>
+</html>
